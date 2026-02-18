@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_hackathon_mobile/configs/routes.dart';
+import 'package:frontend_hackathon_mobile/models/authentication_model.dart';
+import 'package:frontend_hackathon_mobile/providers/authentication_provider.dart';
 import 'package:frontend_hackathon_mobile/views/auth/widgets/custom_submit_buttom.dart';
-import 'package:frontend_hackathon_mobile/views/shared/widgets/utils/form_validators.dart';
+import 'package:frontend_hackathon_mobile/views/shared/utils/form_validators.dart';
 import 'package:frontend_hackathon_mobile/views/shared/widgets/custom_input_text.dart';
+import 'package:provider/provider.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({super.key});
@@ -39,56 +42,52 @@ class _SignupViewState extends State<SignupView> {
   }
 
   Future<void> _handleFormSubmit() async {
-    if (mounted) {
-      _handleClearFields();
-      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Cadastro realizado com sucesso!',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        ),
-      );
-    }
-    // final authProvider = context.read<UserAuthProvider>();
+    final authProvider = context.read<AuthenticationProvider>();
 
-    // bool success = await authProvider.handleCadastrarUsuario(
-    //   CadastroRequest(
-    //     nome: _nomeController.text,
-    //     email: _emailController.text,
-    //     senha: _senhaController.text,
-    //   ),
-    // );
-    // if (success) {
-    //   _handleClearFields();
-    //   if (mounted) {
-    //     Navigator.pushNamedAndRemoveUntil(context, Routes.dashboard, (route) => false);
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text(
-    //           'Cadastro realizado com sucesso!',
-    //           style: TextStyle(color: Theme.of(context).colorScheme.primary),
-    //         ),
-    //         backgroundColor: Colors.lightGreen,
-    //       ),
-    //     );
-    //   }
-    // } else {
-    //   if (mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text(
-    //           authProvider.errorMessage!,
-    //           style: TextStyle(color: Theme.of(context).colorScheme.primary),
-    //         ),
-    //         backgroundColor: Colors.yellowAccent,
-    //         duration: const Duration(seconds: 4),
-    //       ),
-    //     );
-    //   }
-    // }
+    bool success = await authProvider.handleSignupUser(
+      SignupRequest(
+        name: _nameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
+    if (success) {
+      _handleClearFields();
+      if (mounted) {
+        _handleClearFields();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Cadastro realizado com sucesso!',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              authProvider.errorMessage!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 
   @override

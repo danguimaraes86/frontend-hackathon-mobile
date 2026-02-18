@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_hackathon_mobile/configs/routes.dart';
+import 'package:frontend_hackathon_mobile/models/authentication_model.dart';
+import 'package:frontend_hackathon_mobile/providers/authentication_provider.dart';
 import 'package:frontend_hackathon_mobile/views/auth/widgets/custom_submit_buttom.dart';
 import 'package:frontend_hackathon_mobile/views/shared/widgets/custom_input_text.dart';
-import 'package:frontend_hackathon_mobile/views/shared/widgets/utils/form_validators.dart';
+import 'package:frontend_hackathon_mobile/views/shared/utils/form_validators.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -32,56 +35,52 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _handleFormSubmit() async {
-    if (mounted) {
+    final authProvider = context.read<AuthenticationProvider>();
+
+    bool success = await authProvider.handleLoginUser(
+      LoginRequest(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
+
+    if (success) {
       _handleClearFields();
-      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Login realizado com sucesso!',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
+      if (mounted) {
+        _handleClearFields();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.home,
+          (route) => false,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Login realizado com sucesso!',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
             ),
+            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           ),
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        ),
-      );
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              authProvider.errorMessage!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
     }
-
-    // final authProvider = context.read<UserAuthProvider>();
-
-    // bool success = await authProvider.handleLoginUsuario(
-    //   LoginRequest(email: _emailController.text, senha: _passwordController.text),
-    // );
-
-    // if (success) {
-    //   _handleClearFields();
-    //   if (mounted) {
-    //     Navigator.pushNamedAndRemoveUntil(context, Routes.dashboard, (route) => false);
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text(
-    //           'Login realizado com sucesso!',
-    //           style: TextStyle(color: Theme.of(context).colorScheme.primary),
-    //         ),
-    //         backgroundColor: Colors.lightGreen,
-    //       ),
-    //     );
-    //   }
-    // } else {
-    //   if (mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text(
-    //           authProvider.errorMessage!,
-    //           style: TextStyle(color: Theme.of(context).colorScheme.primary),
-    //         ),
-    //         backgroundColor: Colors.yellowAccent,
-    //         duration: const Duration(seconds: 4),
-    //       ),
-    //     );
-    //   }
-    // }
   }
 
   @override
@@ -140,20 +139,16 @@ class _LoginViewState extends State<LoginView> {
                 onChanged: (_) => _validateAndCheckEnabled(),
               ),
               const SizedBox(height: 24),
-              CustomSubmitButton(
-                onPressed: _isFormValid ? _handleFormSubmit : null,
-                text: 'Entrar',
+              Consumer<AuthenticationProvider>(
+                builder: (context, provider, child) {
+                  return CustomSubmitButton(
+                    onPressed: _isFormValid
+                        ? (provider.isLoading ? null : _handleFormSubmit)
+                        : null,
+                    text: 'Entrar',
+                  );
+                },
               ),
-              // Consumer<UserAuthProvider>(
-              //   builder: (context, provider, child) {
-              //     return CustomSubmitButton(
-              //       onPressed: _isFormValid
-              //           ? (provider.isLoading ? null : _handleFormSubmit)
-              //           : null,
-              //       text: 'Entrar',
-              //     );
-              //   },
-              // ),
             ],
           ),
         ),
