@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_hackathon_mobile/configs/routes.dart';
+import 'package:frontend_hackathon_mobile/models/task_model.dart';
+import 'package:frontend_hackathon_mobile/providers/authentication_provider.dart';
+import 'package:frontend_hackathon_mobile/providers/task_provider.dart';
+import 'package:provider/provider.dart';
 
-class DashboardCard extends StatelessWidget {
-  final String userName;
-  final List<TaskStatus> taskStatuses;
-
-  const DashboardCard({
-    super.key,
-    required this.userName,
-    required this.taskStatuses,
-  });
+class DetailedDashboardCard extends StatelessWidget {
+  const DetailedDashboardCard({super.key});
 
   String _getWelcomeMessage() {
     final hour = DateTime.now().hour;
@@ -22,9 +19,49 @@ class DashboardCard extends StatelessWidget {
     }
   }
 
+  IconData _getIconForStatus(TaskStatus status) {
+    return switch (status) {
+      TaskStatus.pending => Icons.assignment_late,
+      TaskStatus.inProgress => Icons.pending_actions,
+      TaskStatus.completed => Icons.task_alt,
+    };
+  }
+
+  String _getLabelForStatus(TaskStatus status) {
+    return switch (status) {
+      TaskStatus.pending => 'Pendentes',
+      TaskStatus.inProgress => 'Em andamento',
+      TaskStatus.completed => 'Concluídas',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hasTasksCount = taskStatuses.isNotEmpty;
+    final user = context.watch<AuthenticationProvider>().user;
+    final username = user?.name ?? 'Usuário';
+
+    final inProgressTasks = context.watch<TaskProvider>().inProgressTasks;
+    final pendingTasks = context.watch<TaskProvider>().pendingTasks;
+
+    final List<Map<String, dynamic>> taskStatuses = [
+      {
+        'status': TaskStatus.inProgress,
+        'itens': inProgressTasks,
+        'count': inProgressTasks.length,
+      },
+      {
+        'status': TaskStatus.pending,
+        'itens': pendingTasks,
+        'count': pendingTasks.length,
+      },
+    ];
+
+    final int taskCount = [
+      inProgressTasks,
+      pendingTasks,
+    ].reduce((a, b) => [...a, ...b]).length;
+
+    final bool hastasks = taskCount > 0;
 
     return Card(
       elevation: 0,
@@ -46,7 +83,7 @@ class DashboardCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bem-vindo, $userName',
+                  'Bem-vindo, $username',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 4),
@@ -67,22 +104,34 @@ class DashboardCard extends StatelessWidget {
               horizontal: 16.0,
             ),
             child: Center(
-              child: hasTasksCount
+              child: hastasks
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 12,
-                      children: taskStatuses.map((status) {
-                        return Badge(
-                          label: Text(status.count.toString()),
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                          child: Chip(
-                            avatar: Icon(status.icon, size: 20),
-                            label: Text(status.label),
-                          ),
-                        );
-                      }).toList(),
+                      children: taskStatuses
+                          .where((s) => (s['count'] as int) > 0)
+                          .map((statusMap) {
+                            final status = statusMap['status'] as TaskStatus;
+                            final count = statusMap['count'] as int;
+
+                            return Badge(
+                              label: Text(
+                                count.toString(),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              child: Chip(
+                                avatar: Icon(
+                                  _getIconForStatus(status),
+                                  size: 20,
+                                ),
+                                label: Text(_getLabelForStatus(status)),
+                              ),
+                            );
+                          })
+                          .toList(),
                     )
                   : Icon(
                       Icons.self_improvement,
@@ -93,7 +142,7 @@ class DashboardCard extends StatelessWidget {
           ),
 
           // Card Actions
-          if (hasTasksCount)
+          if (hastasks)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Center(
@@ -113,18 +162,4 @@ class DashboardCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class TaskStatus {
-  final String label;
-  final IconData icon;
-  final int count;
-  final String value;
-
-  const TaskStatus({
-    required this.label,
-    required this.icon,
-    required this.count,
-    required this.value,
-  });
 }

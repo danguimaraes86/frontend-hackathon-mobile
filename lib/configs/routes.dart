@@ -3,6 +3,7 @@ import 'package:frontend_hackathon_mobile/views/auth/login_view.dart';
 import 'package:frontend_hackathon_mobile/views/auth/signup_view.dart';
 import 'package:frontend_hackathon_mobile/views/dashboard/dashboard_view.dart';
 import 'package:frontend_hackathon_mobile/views/home/home_view.dart';
+import 'package:frontend_hackathon_mobile/views/task_list/task_list_view.dart';
 
 class Routes {
   static String home = '/';
@@ -18,7 +19,7 @@ class Routes {
       Routes.signUp: (context) => const SignupView(),
       Routes.login: (context) => const LoginView(),
       Routes.dashboard: (context) => const DashboardView(),
-      // Routes.taskList: (context) => const TaskListView(),
+      Routes.taskList: (context) => const TaskListView(),
       // Routes.taskForm: (context) => const TransactionsFormPage(),
     };
   }
