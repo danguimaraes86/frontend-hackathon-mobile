@@ -1,30 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/task_model.dart';
-import 'repositories/task_repository.dart';
 
 class TaskService {
-  final _taskRepository = TaskRepository();
+  final _taskCollection = FirebaseFirestore.instance.collection('tasks');
   final _auth = FirebaseAuth.instance;
 
   String get _currentUserId => _auth.currentUser!.uid;
 
   Stream<List<Task>> watchTasks() {
-    return _taskRepository.watchAllTasksByUserId(_currentUserId);
+    return _taskCollection
+        .where('userId', isEqualTo: _currentUserId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Task.fromJson({...doc.data(), 'id': doc.id}))
+              .toList(),
+        );
   }
 
-  Future<Task> addTask(Task task) async {
-    final newTask = task.withUserId(_currentUserId);
-    final taskId = await _taskRepository.createTask(newTask);
-    return newTask.withId(taskId);
+  Future<void> addTask(Task task) async {
+    await _taskCollection.add(task.withUserId(_currentUserId).toJson());
   }
 
   Future<void> deleteTask(String taskId) async {
-    await _taskRepository.deleteTask(taskId);
+    await _taskCollection.doc(taskId).delete();
   }
 
-  Future<Task> updateTask(String taskId, Task updatedTask) async {
-    await _taskRepository.updateTask(taskId, updatedTask);
-    return updatedTask;
+  Future<void> updateTask(String taskId, Task updatedTask) async {
+    await _taskCollection.doc(taskId).update(updatedTask.toJson());
   }
 }

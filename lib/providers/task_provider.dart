@@ -28,12 +28,10 @@ class TaskProvider extends ChangeNotifier {
 
   Future<void> addTask(Task task) async {
     await _taskService.addTask(task);
-    notifyListeners();
   }
 
   Future<void> deleteTask(String taskId) async {
     await _taskService.deleteTask(taskId);
-    notifyListeners();
   }
 
   Future<void> updateTask(String taskId, Task updatedTask) async {
