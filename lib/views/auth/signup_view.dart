@@ -3,8 +3,8 @@ import 'package:frontend_hackathon_mobile/configs/routes.dart';
 import 'package:frontend_hackathon_mobile/models/authentication_model.dart';
 import 'package:frontend_hackathon_mobile/providers/authentication_provider.dart';
 import 'package:frontend_hackathon_mobile/views/auth/widgets/custom_submit_buttom.dart';
-import 'package:frontend_hackathon_mobile/views/shared/utils/form_validators.dart';
-import 'package:frontend_hackathon_mobile/views/shared/widgets/custom_input_text.dart';
+import 'package:frontend_hackathon_mobile/shared/utils/form_validators.dart';
+import 'package:frontend_hackathon_mobile/shared/widgets/custom_input_text.dart';
 import 'package:provider/provider.dart';
 
 class SignupView extends StatefulWidget {
@@ -51,13 +51,12 @@ class _SignupViewState extends State<SignupView> {
         password: _passwordController.text,
       ),
     );
-    if (success) {
-      _handleClearFields();
-      if (mounted) {
+    if (mounted) {
+      if (success) {
         _handleClearFields();
         Navigator.pushNamedAndRemoveUntil(
           context,
-          Routes.home,
+          Routes.dashboard,
           (route) => false,
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,9 +70,7 @@ class _SignupViewState extends State<SignupView> {
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           ),
         );
-      }
-    } else {
-      if (mounted) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -173,20 +170,16 @@ class _SignupViewState extends State<SignupView> {
                 onChanged: (_) => _validateAndCheckEnabled(),
               ),
               const SizedBox(height: 40),
-              CustomSubmitButton(
-                onPressed: _isFormValid ? _handleFormSubmit : null,
-                text: 'Cadastrar',
+              Consumer<AuthenticationProvider>(
+                builder: (context, provider, child) {
+                  return CustomSubmitButton(
+                    onPressed: _isFormValid
+                        ? (provider.isLoading ? null : _handleFormSubmit)
+                        : null,
+                    text: 'Cadastrar',
+                  );
+                },
               ),
-              // Consumer<UserAuthProvider>(
-              //   builder: (context, provider, child) {
-              //     return CustomSubmitButton(
-              //       onPressed: _isFormValid
-              //           ? (provider.isLoading ? null : _handleFormSubmit)
-              //           : null,
-              //       text: 'Cadastrar',
-              //     );
-              //   },
-              // ),
             ],
           ),
         ),

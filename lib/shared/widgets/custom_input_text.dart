@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend_hackathon_mobile/views/shared/utils/form_validators.dart';
+import 'package:frontend_hackathon_mobile/shared/utils/form_validators.dart';
 
 class CustomInputTextWidget extends StatelessWidget {
   final TextEditingController controller;

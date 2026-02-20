@@ -4,7 +4,7 @@ class UserModel {
   late String _email;
 
   String get uid => _uid;
-  String get nome => _name;
+  String get name => _name;
   String get email => _email;
 
   UserModel({

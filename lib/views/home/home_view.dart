@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_hackathon_mobile/views/home/widgets/navigation_bar.dart';
 import 'package:frontend_hackathon_mobile/views/home/widgets/home_body.dart';
+import 'package:frontend_hackathon_mobile/views/home/widgets/navigation_bar.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

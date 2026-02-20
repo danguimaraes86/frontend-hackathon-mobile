@@ -3,8 +3,8 @@ import 'package:frontend_hackathon_mobile/configs/routes.dart';
 import 'package:frontend_hackathon_mobile/models/authentication_model.dart';
 import 'package:frontend_hackathon_mobile/providers/authentication_provider.dart';
 import 'package:frontend_hackathon_mobile/views/auth/widgets/custom_submit_buttom.dart';
-import 'package:frontend_hackathon_mobile/views/shared/widgets/custom_input_text.dart';
-import 'package:frontend_hackathon_mobile/views/shared/utils/form_validators.dart';
+import 'package:frontend_hackathon_mobile/shared/widgets/custom_input_text.dart';
+import 'package:frontend_hackathon_mobile/shared/utils/form_validators.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
@@ -44,13 +44,13 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
 
-    if (success) {
-      _handleClearFields();
-      if (mounted) {
+    if (mounted) {
+      if (success) {
+        _handleClearFields();
         _handleClearFields();
         Navigator.pushNamedAndRemoveUntil(
           context,
-          Routes.home,
+          Routes.dashboard,
           (route) => false,
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -64,9 +64,7 @@ class _LoginViewState extends State<LoginView> {
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           ),
         );
-      }
-    } else {
-      if (mounted) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
