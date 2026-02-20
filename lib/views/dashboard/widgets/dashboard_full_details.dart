@@ -19,22 +19,6 @@ class DetailedDashboardCard extends StatelessWidget {
     }
   }
 
-  IconData _getIconForStatus(TaskStatus status) {
-    return switch (status) {
-      TaskStatus.pending => Icons.assignment_late,
-      TaskStatus.inProgress => Icons.pending_actions,
-      TaskStatus.completed => Icons.task_alt,
-    };
-  }
-
-  String _getLabelForStatus(TaskStatus status) {
-    return switch (status) {
-      TaskStatus.pending => 'Pendentes',
-      TaskStatus.inProgress => 'Em andamento',
-      TaskStatus.completed => 'Concluídas',
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthenticationProvider>().user;
@@ -117,17 +101,18 @@ class DetailedDashboardCard extends StatelessWidget {
                             return Badge(
                               label: Text(
                                 count.toString(),
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
                               ),
                               backgroundColor: Theme.of(
                                 context,
                               ).colorScheme.primary,
                               child: Chip(
-                                avatar: Icon(
-                                  _getIconForStatus(status),
-                                  size: 20,
-                                ),
-                                label: Text(_getLabelForStatus(status)),
+                                avatar: Icon(status.icon, size: 20),
+                                label: Text(status.label),
                               ),
                             );
                           })

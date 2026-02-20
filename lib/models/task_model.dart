@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Task {
   final String id;
@@ -37,20 +38,6 @@ class Task {
     );
   }
 
-  Task withId(String newId) {
-    return Task(
-      id: newId,
-      userId: userId,
-      title: title,
-      description: description,
-      status: status,
-      dueDate: dueDate,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      completedAt: completedAt,
-    );
-  }
-
   Task withUserId(String newUserId) {
     return Task(
       id: id,
@@ -82,12 +69,10 @@ class Task {
       'title': title,
       'description': description,
       'status': status.value,
-      'dueDate': dueDate != null ? Timestamp.fromDate(dueDate!) : null,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'updatedAt': Timestamp.fromDate(updatedAt),
-      'completedAt': completedAt != null
-          ? Timestamp.fromDate(completedAt!)
-          : null,
+      'dueDate': dueDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'completedAt': completedAt?.toIso8601String(),
     };
   }
 
@@ -107,14 +92,15 @@ class Task {
 }
 
 enum TaskStatus {
-  pending('pending', 'Pendente'),
-  inProgress('in_progress', 'Em Progresso'),
-  completed('completed', 'Concluída');
+  pending('pending', 'Pendente', Icons.assignment_late),
+  inProgress('in_progress', 'Em Progresso', Icons.pending_actions),
+  completed('completed', 'Concluída', Icons.task_alt);
 
   final String value;
   final String label;
+  final IconData icon;
 
-  const TaskStatus(this.value, this.label);
+  const TaskStatus(this.value, this.label, this.icon);
 
   static TaskStatus fromValue(String value) {
     return TaskStatus.values.firstWhere(
