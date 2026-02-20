@@ -117,7 +117,7 @@ class _LoginViewState extends State<LoginView> {
                 hintText: 'Digite seu email',
                 prefixIcon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
-                validatores: [
+                validatorList: [
                   (v) => validateRequiredField(v),
                   (v) => validateEmail(v),
                 ],
@@ -130,7 +130,7 @@ class _LoginViewState extends State<LoginView> {
                 hintText: 'Digite sua senha',
                 prefixIcon: Icons.lock,
                 obscureText: true,
-                validatores: [
+                validatorList: [
                   (v) => validateRequiredField(v),
                   (v) => validateMinimumLength(v, minimo: 6),
                 ],

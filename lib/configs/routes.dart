@@ -3,6 +3,7 @@ import 'package:frontend_hackathon_mobile/views/auth/login_view.dart';
 import 'package:frontend_hackathon_mobile/views/auth/signup_view.dart';
 import 'package:frontend_hackathon_mobile/views/dashboard/dashboard_view.dart';
 import 'package:frontend_hackathon_mobile/views/home/home_view.dart';
+import 'package:frontend_hackathon_mobile/views/task_form/task_form_view.dart';
 import 'package:frontend_hackathon_mobile/views/task_list/task_list_view.dart';
 
 class Routes {
@@ -20,7 +21,7 @@ class Routes {
       Routes.login: (context) => const LoginView(),
       Routes.dashboard: (context) => const DashboardView(),
       Routes.taskList: (context) => const TaskListView(),
-      // Routes.taskForm: (context) => const TransactionsFormPage(),
+      Routes.taskForm: (context) => const TaskFormView(),
     };
   }
 }

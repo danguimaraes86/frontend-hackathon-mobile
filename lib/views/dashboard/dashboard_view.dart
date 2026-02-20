@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_hackathon_mobile/configs/routes.dart';
 import 'package:frontend_hackathon_mobile/providers/task_provider.dart';
 import 'package:frontend_hackathon_mobile/shared/widgets/authenticated_app_bar.dart';
 import 'package:frontend_hackathon_mobile/views/dashboard/widgets/dashboard_full_details.dart';
@@ -31,7 +32,9 @@ class _DashboardViewState extends State<DashboardView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.taskForm);
+        },
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child: Icon(
           Icons.add,

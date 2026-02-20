@@ -9,7 +9,7 @@ class CustomInputTextWidget extends StatelessWidget {
   final IconData? prefixIcon;
   final bool obscureText;
   final TextInputType? keyboardType;
-  final List<String? Function(String?)>? validatores;
+  final List<String? Function(String?)>? validatorList;
   final void Function(String)? onChanged;
   final List<TextInputFormatter>? inputFormatter;
 
@@ -21,7 +21,7 @@ class CustomInputTextWidget extends StatelessWidget {
     this.prefixIcon,
     this.obscureText = false,
     this.keyboardType,
-    this.validatores,
+    this.validatorList,
     this.onChanged,
     this.inputFormatter,
   });
@@ -45,7 +45,7 @@ class CustomInputTextWidget extends StatelessWidget {
       cursorColor: Theme.of(context).colorScheme.primary,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      validator: validators(validatores ?? []),
+      validator: validators(validatorList ?? []),
       autocorrect: false,
       inputFormatters: inputFormatter,
       onChanged: onChanged,

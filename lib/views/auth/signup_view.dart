@@ -123,7 +123,7 @@ class _SignupViewState extends State<SignupView> {
                 labelText: 'Nome',
                 hintText: 'Digite seu nome',
                 prefixIcon: Icons.person,
-                validatores: [
+                validatorList: [
                   (v) => validateRequiredField(v),
                   (v) => validateMinimumLength(v, minimo: 6),
                 ],
@@ -137,7 +137,7 @@ class _SignupViewState extends State<SignupView> {
                 hintText: 'Digite seu email',
                 prefixIcon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
-                validatores: [
+                validatorList: [
                   (v) => validateRequiredField(v),
                   (v) => validateEmail(v),
                 ],
@@ -150,7 +150,7 @@ class _SignupViewState extends State<SignupView> {
                 hintText: 'Digite sua senha',
                 prefixIcon: Icons.lock,
                 obscureText: true,
-                validatores: [
+                validatorList: [
                   (v) => validateRequiredField(v),
                   (v) => validateMinimumLength(v, minimo: 6),
                 ],
@@ -163,7 +163,7 @@ class _SignupViewState extends State<SignupView> {
                 hintText: 'Confirme sua senha',
                 prefixIcon: Icons.lock,
                 obscureText: true,
-                validatores: [
+                validatorList: [
                   (v) => validateRequiredField(v),
                   (v) => validateMinimumLength(v, minimo: 6),
                 ],
